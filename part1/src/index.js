@@ -2,23 +2,26 @@ import React from 'react';
 import ReactDOM from 'react-dom';
 import './index.css';
 
-const App = () => {
-    const now = new Date()
-    const a = 10
-    const b = 20
-  
+const Hello = (props) => {
     return (
       <div>
-        <p>Hello world, it is {now.toString()}</p>
-        <p>
-          {a} plus {b} is {a + b}
-        </p>
+        <p>Hello {props.name}</p>
+        <p>WHATS UP {props.asd} </p>
       </div>
     )
   }
   
-  ReactDOM.render(<App />, document.getElementById('root'));
-
+  const App = () => {
+    return (
+      <div>
+        <h1>Greetings</h1>
+        <Hello asd="Maya" name = "Jonne"/>
+        <Hello name="Pekka" />
+      </div>
+    )
+  }
+  
+  ReactDOM.render(<App />, document.getElementById('root'))
 
 /*ReactDOM.render(<App />, document.getElementById('root'));
 
