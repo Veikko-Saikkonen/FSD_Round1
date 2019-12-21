@@ -1,55 +1,129 @@
-import ReactDOM from 'react-dom';
 import React, { useState } from 'react'
+import ReactDOM from 'react-dom'
 
-const History = (props) => {
-    if (props.allClicks.length === 0) {
-      return (
-        <div>
-          the app is used by pressing the buttons
-        </div>
-      )
-    }
-  
-    return (
-      <div>
-        button press history: {props.allClicks.join(' ')}
+
+const App = () => {
+  // tallenna napit omaan tilaansa
+  const [good, setGood] = useState(0)
+  const [neutral, setNeutral] = useState(0)
+  const [bad, setBad] = useState(0)
+
+  return (
+    <div key = 'Root'>
+      <div key = 'Header'>
+        <Header />
       </div>
-    )
-  }
-  
-  const Button = ({ onClick, text }) => (
-    <button onClick={onClick}>
-      {text}
-    </button>
+      <div key = 'Feedback'>
+        <GiveFeedback good = {good} setGood = {setGood} neutral = {neutral} setNeutral = {setNeutral} bad = {bad} setBad = {setBad} />
+      </div>
+      <div key = 'Statistics'>
+        <Statistics good = {good} neutral = {neutral} bad = {bad} />
+      </div>
+    </div>
   )
-  
-  const App = (props) => {
-    const [left, setLeft] = useState(0)
-    const [right, setRight] = useState(0)
-    const [allClicks, setAll] = useState([])
-  
-    const handleLeftClick = () => {
-      setAll(allClicks.concat('L'))
-      setLeft(left + 1)
-    }
-  
-    const handleRightClick = () => {
-      setAll(allClicks.concat('R'))
-      setRight(right + 1)
-    }
-  
-    return (
-      <div>
-        <div>
-          {left}
-          <Button onClick={handleLeftClick} text='left' />
-          <Button onClick={handleRightClick} text='right' />
-          {right}
-          <History allClicks={allClicks} />
-        </div>
-      </div>
-    )
+}
+
+const Statistic = ({text, value}) =>
+{
+  return(
+      <tr key = {text}>
+        <td>
+          {text}
+        </td>
+        <td>
+          {value}
+        </td>
+      </tr>
+  )
+}
+
+const Statistics = ({good, setGood, neutral, setNeutral, bad, setBad}) => {
+
+  const totalCount =  good + bad + neutral;
+  const average = (good + bad) / totalCount;
+  const positiveFraction = good/totalCount * 100;
+
+  let elements = [
+    <table>
+      <thead>
+      </thead>
+      <tbody>
+      <Statistic text = 'Number of reviews' value = {totalCount}/>
+      <Statistic text = 'Good' value = {good}/>
+      <Statistic text = 'Neutral' value = {neutral}/>
+      <Statistic text = 'Bad' value = {bad}/>
+      <Statistic text = 'Average feedback' value = {average}/>
+      <Statistic text = 'Percentage of positive feedback' value = {positiveFraction.toString().concat(' %')}/>
+      </tbody>
+    </table>
+  ]
+
+  const defaultMessage = [
+    <p key = 'Default'>
+      No reviews yet!
+    </p>
+  ]
+  if(!totalCount)
+  {
+    elements = defaultMessage;
   }
+  return(
+    [
+    <h2>
+      Statistics
+    </h2>,
+    elements
+    ]
+  )
+}
+
+const Header = () => {
+  return(
+    <h1>
+      Unicafen palautesovellus
+    </h1>
+  )
+}
+
+const Feedbackbuttons = ({good, setGood, neutral, setNeutral, bad, setBad}) => {
+  return(
+  <>
+    <Button
+      onClick={() => setGood(good + 1)}
+      text='Give positive feedback'
+    />
+    <Button
+      onClick={() => setNeutral(neutral + 1)}
+      text='Give neutral feedback'
+    />
+    <Button
+      onClick={() => setBad(bad + 1)}
+      text='Give negative feedback'
+    />
+  </>
+  )
+}
+
+const Button = ({onClick, text}) => (
+  <button onClick = {onClick}>
+    {text}
+  </button>
+)
 
 
-  ReactDOM.render(<App />, document.getElementById('root'))
+const GiveFeedback = ({good, setGood, neutral, setNeutral, bad, setBad}) => {
+return(
+  <>
+    <h2>
+      Give feedback:
+    </h2>
+    <div>
+      <Feedbackbuttons good = {good} setGood = {setGood} neutral = {neutral} setNeutral = {setNeutral} bad = {bad} setBad = {setBad} />
+    </div>
+  </>
+)
+}
+
+ReactDOM.render(<App />, 
+  document.getElementById('root')
+)
