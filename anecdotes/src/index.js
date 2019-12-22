@@ -5,9 +5,9 @@ import ReactDOM from 'react-dom';
 
 const CurrentAnecdote = ({index}) => {
     return([
-    <h2>
+    <h1>
       Anecdote of the day   
-    </h2>,
+    </h1>,
     <div>
         {anecdotes[index]}
     </div>,
