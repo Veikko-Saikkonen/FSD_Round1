@@ -2,12 +2,16 @@ import React,  { useState } from 'react';
 import ReactDOM from 'react-dom';
 
 
+
 const CurrentAnecdote = ({index}) => {
-    return(
+    return([
+    <h2>
+      Anecdote of the day   
+    </h2>,
     <div>
         {anecdotes[index]}
-    </div>
-    )
+    </div>,
+    ])
 }
 
 const Button = ({onClick, text}) => (
@@ -17,35 +21,99 @@ const Button = ({onClick, text}) => (
 )
 
 
-const App = (props) => {
-  const [selected, setSelected] = useState(0)
-
-  return (
-    <div>
-      <CurrentAnecdote index = {selected} />
-      <NextAnecdoteButton setSelected = {setSelected} />
-    </div>
-  )
-}
-
 function random(max){
     return Math.floor(Math.random() * max);
 };
+const VoteAnecdoteButton = ({index, mostVoted, setMostVoted, totalVotes, setTotalVotes, votes, setVotes}) =>
+{
+  return(
+    <Button
+      onClick = {() => 
+        {
+          votes[index] += 1
+          setVotes(votes)
+          setTotalVotes(totalVotes += 1)
+          if(votes[index] > votes[mostVoted])
+          {
+            setMostVoted(index)
+          }
+        }
+      }
+      text = 'Vote'
+    />
+  )
+}
 
-const NextAnecdoteButton = ({setSelected, index}) => {
+const NextAnecdoteButton = ({setSelected}) => {
     return(
     <Button 
         onClick = {() => setSelected(random(6))}
-        text = 'Next random anecdote'
+        text = 'Next anecdote'
     />
     )
 }
 
-function VoteThis(index) {
-    anecdoteHandlers[index][1](anecdoteHandlers[index][0] + 1);
-    return
-} 
-const anecdoteHandlers = [[useState(0)], [useState(0)], [useState(0)], [useState(0)], [useState(0)], [useState(0)]]
+const MostVoted = ({index}) => 
+{
+  return(
+    [
+      <h2>
+        Anecdote with the most votes
+      </h2>,
+      <p>
+        {anecdotes[index]}
+      </p>
+    ]
+  )
+}
+
+const AllVotes = ({votes}) =>
+{
+  let elems = [
+  <h2>
+    Total amount of votes: {votes.reduce((a,b) => a + b, 0)}
+  </h2>,
+  <h3>
+    Per anecdote: 
+  </h3>];
+  
+  let i = 0;
+
+  votes.forEach(value => {
+    elems = elems.concat(
+      <p>{value} : {anecdotes[i++]}</p>
+    )
+  });
+  return(
+    elems
+  )
+}
+
+const App = ({anecdotes}) => {
+  const [selected, setSelected] = useState(0)
+  const [mostVoted, setMostVoted] = useState(0)
+  const [totalVotes, setTotalVotes] = useState(0)
+  const [votes, setVotes] = useState(Array(6).fill(0))
+
+  console.log("Votes : " + votes)
+  return (
+    <div>
+      <div>
+        <CurrentAnecdote anecdotes = {anecdotes} index = {selected} />
+      </div>
+      <div>
+        <NextAnecdoteButton setSelected = {setSelected} />
+        <VoteAnecdoteButton index = {selected}  mostVoted = {mostVoted} setMostVoted = {setMostVoted}
+                            totalVotes = {totalVotes} setTotalVotes = {setTotalVotes}
+                            votes = {votes} setVotes = {setVotes}/>
+      </div>
+      <div>
+        <MostVoted anecdotes = {anecdotes} index = {mostVoted}/>
+        <AllVotes totalVotes = {totalVotes} votes = {votes}/>
+      </div>
+    </div>
+  )
+}
 
 const anecdotes = [
   'If it hurts, do it more often',
